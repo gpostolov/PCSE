@@ -1,0 +1,2 @@
+../Drivers/SHT3x-DIS/src/port.c:7:6:SHT3x_DIS_write_PORT	32	static
+../Drivers/SHT3x-DIS/src/port.c:12:6:SHT3x_DIS_read_PORT	32	static
