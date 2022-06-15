@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "STM32_port.h"
+
+#include "inc/sht3x_dis_stm32f4xx_port.h"
 
 /* ADDRESS */
 typedef enum sht3x_address_e {
@@ -50,19 +51,22 @@ typedef enum sht3x_command_e {
 	SHT3X_COMMAND_CLEAR_STATUS		= 0xF32D	//Clear Status Register
 } sht3x_command_t;
 
-//typedef struct sht3x_handle_s{
-//	I2C_HandleTypeDef *i2c_handle;
-//	uint16_t device_address;
-//} sht3x_handle_t;
+/* HANDLE */
+typedef struct sht3x_s{
+	I2C_Handle_Port_t *i2c_port;
+	sht3x_address_t address;
+	sht3x_mode_t mode;
+}sht3x_t;
 
 /* FUNCTIONS */
-void SHT3x_DIS_config(sht3x_address_t my_address, sht3x_mode_t my_mode);
-void SHT3x_DIS_reset(void);
-void SHT3x_DIS_heater(bool enabled);
-void SHT3x_DIS_read_status(uint32_t *status);
-void SHT3x_DIS_clear_status(void);
+void SHT3x_DIS_init(sht3x_t * const dev, I2C_Handle_Port_t* i2c);
+void SHT3x_DIS_config(sht3x_t * const dev, sht3x_address_t my_address, sht3x_mode_t my_mode);
+void SHT3x_DIS_reset(sht3x_t * const dev);
+void SHT3x_DIS_heater(sht3x_t * const dev, bool enabled);
+void SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status);
+void SHT3x_DIS_clear_status(sht3x_t * const dev);
 
-void SHT3x_DIS_read_TH(uint32_t *temp,uint32_t *hum);
+void SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
 
 #ifdef __cplusplus
 extern "C" {

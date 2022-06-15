@@ -1,0 +1,12 @@
+
+#include "inc/sht3x_dis_stm32f4xx_port.h"
+
+void SHT3x_DIS_write_PORT(uint16_t DevAddress, uint8_t *pData, uint16_t Size, I2C_Handle_Port_t * const i2c_handle){
+	HAL_StatusTypeDef i2c_status;
+	i2c_status = HAL_I2C_Master_Transmit(i2c_handle->instance, DevAddress<<1, pData, Size,2000);
+}
+
+void SHT3x_DIS_read_PORT(uint16_t DevAddress, uint8_t *pData, uint16_t Size, I2C_Handle_Port_t * const i2c_handle){
+	HAL_StatusTypeDef i2c_status;
+	i2c_status = HAL_I2C_Master_Receive(i2c_handle->instance, (DevAddress<<1), pData, Size,2000);
+}

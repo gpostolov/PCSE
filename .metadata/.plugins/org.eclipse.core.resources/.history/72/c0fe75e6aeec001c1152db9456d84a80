@@ -1,0 +1,20 @@
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __PORT_H
+#define __PORT_H
+
+typedef struct I2C_Handle_Port_s {
+	I2C_HandleTypeDef *interface;
+}I2C_Handle_Port_t;
+
+/* Functions */
+
+I2CPortSignal I2CPort_masterWriteBytes (I2CPort * const me, uint8_t devAddress, uint8_t devRegister, uint8_t *txData, uint16_t size)
+
+void SHT3x_DIS_write_PORT(uint16_t DevAddress, uint8_t *pData, uint16_t Size, I2C_Handle_Port_t * const i2c_handle);
+void SHT3x_DIS_read_PORT(uint16_t DevAddress, uint8_t *pData, uint16_t Size, I2C_Handle_Port_t * const i2c_handle);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#endif /* __PORT_H */
