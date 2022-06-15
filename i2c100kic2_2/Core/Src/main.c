@@ -94,7 +94,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  SHT3x_DIS_init(0, 0);
+  SHT3x_DIS_config(0, 1);
+
   uint32_t temp = 0;
   uint32_t hum = 0;
 
@@ -102,39 +103,40 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-	//HAL_StatusTypeDef i2c_status;
+	HAL_StatusTypeDef i2c_status;
 	//Command to read from SHT3X-DIS
-	//uint8_t tx_buffer[2];
-	//tx_buffer[0] = 0x2C;
-	//tx_buffer[1] = 0x06;
+	uint8_t tx_buffer[2];
+	tx_buffer[0] = 0x2C;
+	tx_buffer[1] = 0x06;
 
-	//uint8_t rx_buffer[6];
-	//rx_buffer[0] = 0x00;
-	//rx_buffer[1] = 0x00;
-	//rx_buffer[2] = 0x00;
-	//rx_buffer[3] = 0x00;
-	//rx_buffer[4] = 0x00;
-	//rx_buffer[5] = 0x00;
+	uint8_t rx_buffer[6];
+	rx_buffer[0] = 0x00;
+	rx_buffer[1] = 0x00;
+	rx_buffer[2] = 0x00;
+	rx_buffer[3] = 0x00;
+	rx_buffer[4] = 0x00;
+	rx_buffer[5] = 0x00;
 
-	//i2c_status = HAL_I2C_Master_Transmit(&hi2c2, (0x44<<1), tx_buffer, 2,2000);
-	//if ( i2c_status != HAL_OK){
-	//	//Error_Handler();
-	//	i2c_status++;
-	//}
+	i2c_status = HAL_I2C_Master_Transmit(&hi2c2, (0x44<<1), tx_buffer, 2,2000);
+	if ( i2c_status != HAL_OK){
+		//Error_Handler();
+		i2c_status++;
+	}
 
-	//HAL_Delay(1);
+	HAL_Delay(1);
 
-	//i2c_status = HAL_I2C_Master_Receive(&hi2c2, (0x44<<1), rx_buffer, 6,2000);
-	//if ( i2c_status != HAL_OK){
-	//	//Error_Handler();
-	//	i2c_status++;
-	//}
+	i2c_status = HAL_I2C_Master_Receive(&hi2c2, (0x44<<1), rx_buffer, 6,2000);
+	if ( i2c_status != HAL_OK){
+		//Error_Handler();
+		i2c_status++;
+	}
 
-	//uint32_t temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
-	//uint32_t hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
+	temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
+	hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
 
-	//temp++;
-	//hum++;
+	temp=0;
+	hum=0;
+
 	SHT3x_DIS_read_TH(&temp,&hum);
 
 	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);

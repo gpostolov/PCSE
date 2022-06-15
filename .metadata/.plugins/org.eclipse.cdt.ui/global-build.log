@@ -1,0 +1,14 @@
+01:56:10 **** Incremental Build of configuration Debug for project i2c100kic2_2 ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/Gabriel/Documents/GitHub/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "i2c100kic2_2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Gabriel\Documents\GitHub\PCSE\i2c100kic2_2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="i2c100kic2_2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: i2c100kic2_2.elf
+ 
+arm-none-eabi-size   i2c100kic2_2.elf 
+arm-none-eabi-objdump -h -S  i2c100kic2_2.elf  > "i2c100kic2_2.list"
+   text	   data	    bss	    dec	    hex	filename
+  14152	     20	   1660	  15832	   3dd8	i2c100kic2_2.elf
+Finished building: default.size.stdout
+ 
+Finished building: i2c100kic2_2.list
+ 

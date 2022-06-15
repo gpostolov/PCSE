@@ -1,0 +1,231 @@
+/**
+ ******************************************************************************
+ * @file      SHT3x_DIS.c
+ * @author    Driver para el SHT3x-DIS
+ * @brief     Este documento es la base, luego falta el port para cada placa
+ ******************************************************************************
+ */
+
+/* Includes */
+#include <inc/sht3x_dis.h>
+#include <stdio.h>
+
+/* Defines */
+//Address
+#define _SHT3X_I2C_ADDRESS_A 0x44
+#define _SHT3X_I2C_ADDRESS_B 0x45
+
+//Single Shot
+//Clock Stretching enabled - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_CS_ENABLED_0		0x2C
+#define _SHT3X_I2C_MODE_HIGH_CS_ENABLED_1		0x06
+//Clock Stretching enabled - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_CS_ENABLED_0		0x2C
+#define _SHT3X_I2C_MODE_MEDIUM_CS_ENABLED_1		0x0D
+//Clock Stretching enabled - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_CS_ENABLED_0		0x2C
+#define _SHT3X_I2C_MODE_LOW_CS_ENABLED_1		0x10
+//Clock Stretching disabled - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_CS_DISABLED_0		0x24
+#define _SHT3X_I2C_MODE_HIGH_CS_DISABLED_1		0x00
+//Clock Stretching disabled - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_CS_DISABLED_0	0x24
+#define _SHT3X_I2C_MODE_MEDIUM_CS_DISABLED_1	0x0B
+//Clock Stretching disabled - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_CS_DISABLED_0		0x24
+#define _SHT3X_I2C_MODE_LOW_CS_DISABLED_1		0x16
+
+//
+//Periodic
+//mps 0.5 - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_MPS005_0			0x20
+#define _SHT3X_I2C_MODE_HIGH_MPS005_1			0x32
+//mps 0.5 - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_MPS005_0			0x20
+#define _SHT3X_I2C_MODE_MEDIUM_MPS005_1			0x24
+//mps 0.5 - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_MPS005_0			0x20
+#define _SHT3X_I2C_MODE_LOW_MPS005_1			0x2F
+//mps 1 - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_MPS010_0			0x21
+#define _SHT3X_I2C_MODE_HIGH_MPS010_1			0x30
+//mps 1- Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_MPS010_0			0x21
+#define _SHT3X_I2C_MODE_MEDIUM_MPS010_1			0x26
+//mps 1 - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_MPS010_0			0x21
+#define _SHT3X_I2C_MODE_LOW_MPS010_1			0x2D
+//mps 2 - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_MPS020_0			0x22
+#define _SHT3X_I2C_MODE_HIGH_MPS020_1			0x36
+//mps 2 - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_MPS020_0			0x22
+#define _SHT3X_I2C_MODE_MEDIUM_MPS020_1			0x20
+//mps 2 - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_MPS020_0			0x22
+#define _SHT3X_I2C_MODE_LOW_MPS020_1			0x2B
+//mps 4 - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_MPS040_0			0x23
+#define _SHT3X_I2C_MODE_HIGH_MPS040_1			0x34
+//mps 4 - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_MPS040_0			0x23
+#define _SHT3X_I2C_MODE_MEDIUM_MPS040_1			0x22
+//mps 4 - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_MPS040_0			0x23
+#define _SHT3X_I2C_MODE_LOW_MPS040_1			0x29
+//mps 10 - Repeatability High
+#define _SHT3X_I2C_MODE_HIGH_MPS100_0			0x27
+#define _SHT3X_I2C_MODE_HIGH_MPS100_1			0x37
+//mps 10 - Repeatability Medium
+#define _SHT3X_I2C_MODE_MEDIUM_MPS100_0			0x27
+#define _SHT3X_I2C_MODE_MEDIUM_MPS100_1			0x21
+//mps 10 - Repeatability Low
+#define _SHT3X_I2C_MODE_LOW_MPS100_0			0x27
+#define _SHT3X_I2C_MODE_LOW_MPS100_1			0x2A
+
+#define MAX_LENGHT 4
+
+/* Private */
+typedef struct _sht3x_config_s{
+	uint16_t address;
+	uint8_t command[2];
+}_sht3x_config_t;
+
+static void _SHT3x_DIS_write(void);
+static void _SHT3x_DIS_read(uint32_t *temp,uint32_t *hum);
+
+/* Variables */
+static _sht3x_config_t my_config;
+
+/* Functions */
+void SHT3x_DIS_config(sht3x_address_t my_address, sht3x_mode_t my_mode){
+	//Address
+	if (my_address){
+		my_config.address = _SHT3X_I2C_ADDRESS_B;
+	}else{
+		my_config.address = _SHT3X_I2C_ADDRESS_A;
+	}
+	//Mode
+	switch (my_mode){
+	//Single Shot
+	case SHT3X_I2C_MODE_HIGH_CS_ENABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_HIGH_CS_ENABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_HIGH_CS_ENABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_CS_ENABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_MEDIUM_CS_ENABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_MEDIUM_CS_ENABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_CS_ENABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_ENABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_ENABLED_1;
+		break;
+	case SHT3X_I2C_MODE_HIGH_CS_DISABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_HIGH_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_HIGH_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_CS_DISABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_MEDIUM_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_MEDIUM_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_CS_DISABLED:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	//Periodic
+	case SHT3X_I2C_MODE_HIGH_MPS005:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_MPS005:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_MPS005:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_HIGH_MPS010:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_MPS010:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_MPS010:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_HIGH_MPS020:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_MPS020:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_MPS020:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_HIGH_MPS040:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_MPS040:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_MPS040:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_HIGH_MPS100:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_MEDIUM_MPS100:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	case SHT3X_I2C_MODE_LOW_MPS100:
+		my_config.command[0] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_LOW_CS_DISABLED_1;
+		break;
+	default:
+		my_config.command[0] = _SHT3X_I2C_MODE_HIGH_CS_ENABLED_0;
+		my_config.command[1] = _SHT3X_I2C_MODE_HIGH_CS_ENABLED_1;
+		break;
+	}
+}
+
+void SHT3x_DIS_read_TH(uint32_t *temp,uint32_t *hum){
+	_SHT3x_DIS_write();
+	_SHT3x_DIS_read(temp, hum);
+}
+
+static void _SHT3x_DIS_write(){
+	uint8_t tx_buffer[2];
+	tx_buffer[0] = my_config.command[0];
+	tx_buffer[1] = my_config.command[1];
+	SHT3x_DIS_write_PORT(my_config.address, tx_buffer,2);
+}
+
+static void _SHT3x_DIS_read(uint32_t *temp,uint32_t *hum){
+	uint8_t rx_buffer[6];
+
+	rx_buffer[0] = 0x00;
+	rx_buffer[1] = 0x00;
+	rx_buffer[2] = 0x00;
+	rx_buffer[3] = 0x00;
+	rx_buffer[4] = 0x00;
+	rx_buffer[5] = 0x00;
+
+	SHT3x_DIS_read_PORT(my_config.address,rx_buffer,6);
+
+	*temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
+	*hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
+}
+
+
