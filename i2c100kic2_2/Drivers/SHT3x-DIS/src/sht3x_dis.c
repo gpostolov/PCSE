@@ -14,19 +14,24 @@
 #define MAX_LENGHT 4
 
 /* Private */
-static void _SHT3x_DIS_write(sht3x_t * const dev, uint8_t *data);
-static void _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
-static void _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status);
+static statusPort_f _SHT3x_DIS_write(sht3x_t * const dev, uint8_t *data);
+static statusPort_f _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
+static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status);
 
 /* Variables */
 I2C_Handle_Port_t i2c;
 
 /* Functions */
-void SHT3x_DIS_init(sht3x_t * const dev, I2C_Handle_Port_t* i2c){
+statusPort_f SHT3x_DIS_init(sht3x_t * const dev, I2C_Handle_Port_t* i2c){
+	if (dev == NULL ) return STATUS_PORT_ERROR;
+	if (i2c == NULL ) return STATUS_PORT_ERROR;
 	dev->i2c_port = i2c;
+	return STATUS_PORT_OK;
 }
 
-void SHT3x_DIS_config(sht3x_t * const dev,  sht3x_address_t my_address, sht3x_mode_t my_mode){
+statusPort_f SHT3x_DIS_config(sht3x_t * const dev,  sht3x_address_t my_address, sht3x_mode_t my_mode){
+	if (dev == NULL ) return STATUS_PORT_ERROR;
+
 	//Address
 	if ((my_address == SHT3X_ADDRESS_A) || (my_address == SHT3X_ADDRESS_B)){
 		dev->address = my_address;
@@ -65,16 +70,23 @@ void SHT3x_DIS_config(sht3x_t * const dev,  sht3x_address_t my_address, sht3x_mo
 		dev->mode = SHT3X_MODE_HIGH_CS_ENABLED;
 		break;
 	}
+	return STATUS_PORT_OK;
 }
 
-void SHT3x_DIS_reset(sht3x_t * const dev){
+statusPort_f SHT3x_DIS_reset(sht3x_t * const dev){
+	statusPort_f status_error;
+	if (dev == NULL ) return STATUS_PORT_ERROR;
 	uint8_t tx_buffer[2];
 	tx_buffer[0] = (SHT3X_COMMAND_SOFT_RESET & 0xFF00u) >> 8u;
 	tx_buffer[1] =  SHT3X_COMMAND_SOFT_RESET & 0x00FFu;
-	_SHT3x_DIS_write(dev,tx_buffer);
+	status_error = _SHT3x_DIS_write(dev,tx_buffer);
+	return status_error;
 }
 
-void SHT3x_DIS_heater(sht3x_t * const dev, bool enabled){
+statusPort_f SHT3x_DIS_heater(sht3x_t * const dev, bool enabled){
+	statusPort_f status_error;
+	if (dev == NULL ) return STATUS_PORT_ERROR;
+
 	uint8_t tx_buffer[2];
 	if(enabled){
 		tx_buffer[0] = (SHT3X_COMMAND_HEATER_ENABLED & 0xFF00u) >> 8u;
@@ -83,37 +95,56 @@ void SHT3x_DIS_heater(sht3x_t * const dev, bool enabled){
 		tx_buffer[0] = (SHT3X_COMMAND_HEATER_DISABLED & 0xFF00u) >> 8u;
 		tx_buffer[1] =  SHT3X_COMMAND_HEATER_DISABLED & 0x00FFu;
 	}
-	_SHT3x_DIS_write(dev,tx_buffer);
+	status_error = _SHT3x_DIS_write(dev,tx_buffer);
+	return status_error;
 }
 
-void SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status){
+statusPort_f SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status){
+	statusPort_f status_error;
+	if (dev == NULL ) return STATUS_PORT_ERROR;
+	if (status == NULL ) return STATUS_PORT_ERROR;
 	uint8_t tx_buffer[2];
 	tx_buffer[0] = (SHT3X_COMMAND_READ_STATUS & 0xFF00u) >> 8u;
 	tx_buffer[1] =  SHT3X_COMMAND_READ_STATUS & 0x00FFu;
-	_SHT3x_DIS_write(dev,tx_buffer);
-	_SHT3x_DIS_read_STATUS(dev,status);
+	status_error = _SHT3x_DIS_write(dev,tx_buffer);
+	if(status_error != STATUS_PORT_OK) return status_error;
+	status_error = _SHT3x_DIS_read_STATUS(dev,status);
+	return status_error;
 }
 
-void SHT3x_DIS_clear_status(sht3x_t * const dev){
+statusPort_f SHT3x_DIS_clear_status(sht3x_t * const dev){
+	statusPort_f status_error;
+	if (dev == NULL ) return STATUS_PORT_ERROR;
 	uint8_t tx_buffer[2];
 	tx_buffer[0] = (SHT3X_COMMAND_CLEAR_STATUS & 0xFF00u) >> 8u;
 	tx_buffer[1] =  SHT3X_COMMAND_CLEAR_STATUS & 0x00FFu;
-	_SHT3x_DIS_write(dev,tx_buffer);
+	status_error = _SHT3x_DIS_write(dev,tx_buffer);
+	return status_error;
 }
 
-void SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum){
+statusPort_f SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum){
+	statusPort_f status_error;
+	if (dev == NULL ) return STATUS_PORT_ERROR;
+	if (temp == NULL ) return STATUS_PORT_ERROR;
+	if (hum == NULL ) return STATUS_PORT_ERROR;
+
 	uint8_t tx_buffer[2];
 	tx_buffer[0] = ((dev->mode) & 0xFF00u) >> 8u;
 	tx_buffer[1] =  (dev->mode) & 0x00FFu;
-	_SHT3x_DIS_write(dev, tx_buffer);
-	_SHT3x_DIS_read_TH(dev, temp, hum);
+	status_error = _SHT3x_DIS_write(dev, tx_buffer);
+	if(status_error != STATUS_PORT_OK) return status_error;
+	status_error = _SHT3x_DIS_read_TH(dev, temp, hum);
+	return status_error;
 }
 
-static void _SHT3x_DIS_write(sht3x_t * const dev, uint8_t *data){
-	SHT3x_DIS_write_PORT(dev->address, data, 2, dev->i2c_port);
+static statusPort_f _SHT3x_DIS_write(sht3x_t * const dev, uint8_t *data){
+	statusPort_f status_error;
+	status_error = SHT3x_DIS_write_PORT(dev->address, data, 2, dev->i2c_port);
+	return status_error;
 }
 
-static void _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum){
+static statusPort_f _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum){
+	statusPort_f status_error;
 	uint8_t rx_buffer[6];
 
 	rx_buffer[0] = 0x00;
@@ -123,22 +154,29 @@ static void _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum
 	rx_buffer[4] = 0x00;
 	rx_buffer[5] = 0x00;
 
-	SHT3x_DIS_read_PORT(dev->address, rx_buffer,6,dev->i2c_port);
+	status_error = SHT3x_DIS_read_PORT(dev->address, rx_buffer,6,dev->i2c_port);
+	if(status_error != STATUS_PORT_OK) return status_error;
 
 	*temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
 	*hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
+
+	return STATUS_PORT_OK;
 }
 
-static void _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status){
+static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status){
+	statusPort_f status_error;
 	uint8_t rx_buffer[6];
 
 	rx_buffer[0] = 0x00;
 	rx_buffer[1] = 0x00;
 	rx_buffer[2] = 0x00;
 
-	SHT3x_DIS_read_PORT(dev->address, rx_buffer,3,dev->i2c_port);
+	status_error = SHT3x_DIS_read_PORT(dev->address, rx_buffer,3,dev->i2c_port);
+	if(status_error != STATUS_PORT_OK) return status_error;
 
 	status[0] = rx_buffer[0];
 	status[1] = rx_buffer[1];
 	status[2] = rx_buffer[2];
+
+	return STATUS_PORT_OK;
 }

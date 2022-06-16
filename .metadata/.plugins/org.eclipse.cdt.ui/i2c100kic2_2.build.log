@@ -1,44 +1,10 @@
-16:31:52 **** Incremental Build of configuration Debug for project i2c100kic2_2 ****
+00:18:30 **** Incremental Build of configuration Debug for project i2c100kic2_2 ****
 make -j4 all 
-arm-none-eabi-gcc "../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/Gabriel Postolov/Documents/Gabriel/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.d" -MT"Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.o"
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c: In function '_SHT3x_DIS_write_PORT_Error_Handler':
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:30:4: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
-   30 |    printf(&cadena_HAL_ERROR);
-      |    ^~~~~~
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:30:4: warning: incompatible implicit declaration of built-in function 'printf'
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:2:1: note: include '<stdio.h>' or provide a declaration of 'printf'
-    1 | #include "inc/sht3x_dis_stm32f4xx_port.h"
-  +++ |+#include <stdio.h>
-    2 | 
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:30:11: warning: passing argument 1 of 'printf' from incompatible pointer type [-Wincompatible-pointer-types]
-   30 |    printf(&cadena_HAL_ERROR);
-      |           ^~~~~~~~~~~~~~~~~
-      |           |
-      |           char * const*
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:30:11: note: expected 'const char *' but argument is of type 'char * const*'
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:33:11: warning: passing argument 1 of 'printf' from incompatible pointer type [-Wincompatible-pointer-types]
-   33 |    printf(&cadena_HAL_BUSY);
-      |           ^~~~~~~~~~~~~~~~
-      |           |
-      |           char * const*
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:33:11: note: expected 'const char *' but argument is of type 'char * const*'
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:36:11: warning: passing argument 1 of 'printf' from incompatible pointer type [-Wincompatible-pointer-types]
-   36 |    printf(&cadena_HAL_TIMEOUT);
-      |           ^~~~~~~~~~~~~~~~~~~
-      |           |
-      |           char * const*
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:36:11: note: expected 'const char *' but argument is of type 'char * const*'
-arm-none-eabi-gcc -o "i2c100kic2_2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Gabriel Postolov\Documents\Gabriel\PCSE\i2c100kic2_2\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="i2c100kic2_2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: i2c100kic2_2.elf
- 
 arm-none-eabi-size   i2c100kic2_2.elf 
-arm-none-eabi-objdump -h -S  i2c100kic2_2.elf  > "i2c100kic2_2.list"
    text	   data	    bss	    dec	    hex	filename
-  18908	    120	   1672	  20700	   50dc	i2c100kic2_2.elf
+  14332	     20	   1652	  16004	   3e84	i2c100kic2_2.elf
 Finished building: default.size.stdout
  
-Finished building: i2c100kic2_2.list
- 
 
-16:31:53 Build Finished. 0 errors, 5 warnings. (took 942ms)
+00:18:30 Build Finished. 0 errors, 0 warnings. (took 335ms)
 

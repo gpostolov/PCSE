@@ -1,3 +1,2 @@
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:11:6:SHT3x_DIS_write_PORT	40	static
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:19:6:SHT3x_DIS_read_PORT	40	static
-../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:27:6:_SHT3x_DIS_write_PORT_Error_Handler	16	static
+../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:5:14:SHT3x_DIS_write_PORT	40	static
+../Drivers/SHT3x-DIS/src/sht3x_dis_stm32F4xx_port.c:11:14:SHT3x_DIS_read_PORT	40	static

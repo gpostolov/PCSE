@@ -59,14 +59,14 @@ typedef struct sht3x_s{
 }sht3x_t;
 
 /* FUNCTIONS */
-void SHT3x_DIS_init(sht3x_t * const dev, I2C_Handle_Port_t* i2c);
-void SHT3x_DIS_config(sht3x_t * const dev, sht3x_address_t my_address, sht3x_mode_t my_mode);
-void SHT3x_DIS_reset(sht3x_t * const dev);
-void SHT3x_DIS_heater(sht3x_t * const dev, bool enabled);
-void SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status);
-void SHT3x_DIS_clear_status(sht3x_t * const dev);
+statusPort_f SHT3x_DIS_init(sht3x_t * const dev, I2C_Handle_Port_t* i2c);
+statusPort_f SHT3x_DIS_config(sht3x_t * const dev, sht3x_address_t my_address, sht3x_mode_t my_mode);
+statusPort_f SHT3x_DIS_reset(sht3x_t * const dev);
+statusPort_f SHT3x_DIS_heater(sht3x_t * const dev, bool enabled);
+statusPort_f SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status);
+statusPort_f SHT3x_DIS_clear_status(sht3x_t * const dev);
 
-void SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
+statusPort_f SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
 
 #ifdef __cplusplus
 extern "C" {

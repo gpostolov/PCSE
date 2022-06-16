@@ -1,6 +1,6 @@
 Drivers/SHT3x-DIS/src/sht3x_dis.o: ../Drivers/SHT3x-DIS/src/sht3x_dis.c \
- C:/Users/Gabriel\ Postolov/Documents/Gabriel/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis.h \
- C:/Users/Gabriel\ Postolov/Documents/Gabriel/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis_stm32f4xx_port.h \
+ C:/Users/Gabriel/Documents/GitHub/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis.h \
+ C:/Users/Gabriel/Documents/GitHub/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis_stm32f4xx_port.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -29,8 +29,8 @@ Drivers/SHT3x-DIS/src/sht3x_dis.o: ../Drivers/SHT3x-DIS/src/sht3x_dis.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h
-C:/Users/Gabriel\ Postolov/Documents/Gabriel/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis.h:
-C:/Users/Gabriel\ Postolov/Documents/Gabriel/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis_stm32f4xx_port.h:
+C:/Users/Gabriel/Documents/GitHub/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis.h:
+C:/Users/Gabriel/Documents/GitHub/PCSE/i2c100kic2_2/Drivers/SHT3x-DIS/inc/sht3x_dis_stm32f4xx_port.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
