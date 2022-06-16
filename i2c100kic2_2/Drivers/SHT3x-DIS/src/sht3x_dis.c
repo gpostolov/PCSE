@@ -16,7 +16,8 @@
 /* Private */
 static statusPort_f _SHT3x_DIS_write(sht3x_t * const dev, uint8_t *data);
 static statusPort_f _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint32_t *hum);
-static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status);
+static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint8_t *status);
+static uint8_t 		_SHT3x_DIS_CheckCrc(uint8_t data[], uint8_t nbrOfBytes, uint8_t checksum);
 
 /* Variables */
 I2C_Handle_Port_t i2c;
@@ -99,7 +100,7 @@ statusPort_f SHT3x_DIS_heater(sht3x_t * const dev, bool enabled){
 	return status_error;
 }
 
-statusPort_f SHT3x_DIS_read_status(sht3x_t * const dev, uint32_t *status){
+statusPort_f SHT3x_DIS_read_status(sht3x_t * const dev, uint8_t *status){
 	statusPort_f status_error;
 	if (dev == NULL ) return STATUS_PORT_ERROR;
 	if (status == NULL ) return STATUS_PORT_ERROR;
@@ -157,15 +158,22 @@ static statusPort_f _SHT3x_DIS_read_TH(sht3x_t * const dev, uint32_t *temp,uint3
 	status_error = SHT3x_DIS_read_PORT(dev->address, rx_buffer,6,dev->i2c_port);
 	if(status_error != STATUS_PORT_OK) return status_error;
 
-	*temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
-	*hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
+	//CheckCrc
+	if (_SHT3x_DIS_CheckCrc(&rx_buffer[0], 2, rx_buffer[2]) == 0){
+		*temp = (uint32_t)(((rx_buffer[0]*256) + rx_buffer[1])*175)/65535.0-45.0;
+	}
+
+	//CheckCrc
+	if (_SHT3x_DIS_CheckCrc(&rx_buffer[3], 2, rx_buffer[5]) == 0){
+		*hum =  (uint32_t)(((rx_buffer[3]*256) + rx_buffer[4]))*100.0/65535.0;
+	}
 
 	return STATUS_PORT_OK;
 }
 
-static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status){
+static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint8_t *status){
 	statusPort_f status_error;
-	uint8_t rx_buffer[6];
+	uint8_t rx_buffer[3];
 
 	rx_buffer[0] = 0x00;
 	rx_buffer[1] = 0x00;
@@ -174,9 +182,38 @@ static statusPort_f _SHT3x_DIS_read_STATUS(sht3x_t * const dev, uint32_t *status
 	status_error = SHT3x_DIS_read_PORT(dev->address, rx_buffer,3,dev->i2c_port);
 	if(status_error != STATUS_PORT_OK) return status_error;
 
-	status[0] = rx_buffer[0];
-	status[1] = rx_buffer[1];
-	status[2] = rx_buffer[2];
+	//CheckCrc
+	if (_SHT3x_DIS_CheckCrc(&rx_buffer[0], 2, rx_buffer[2]) == 0){
+		status[0] = rx_buffer[0];
+		status[1] = rx_buffer[1];
+	}
 
 	return STATUS_PORT_OK;
+}
+
+//
+//CRC
+#define POLYNOMIAL 0x31 //P(x)=x^8+x^5+x^4+1
+
+typedef enum {
+	CHECKSUM_ERROR = 0X04
+} etError;
+
+uint8_t _SHT3x_DIS_CheckCrc(uint8_t data[], uint8_t nbrOfBytes, uint8_t checksum){
+	uint8_t crc = 0xff;
+	uint8_t byteCtr;
+	//calculates 8-Bit checksum with given polynomial
+	for (byteCtr = 0; byteCtr < nbrOfBytes; byteCtr++) {
+		crc ^= (data[byteCtr]);
+		for (uint8_t bit = 0; bit < 8; bit++) {
+			if (crc & 0x80)
+				crc = (uint8_t)((uint8_t)(crc << 1) ^ POLYNOMIAL);
+			else
+				crc = (crc << 1);
+		}
+	}
+	if (crc != checksum)
+		return CHECKSUM_ERROR;
+	else
+		return 0;
 }

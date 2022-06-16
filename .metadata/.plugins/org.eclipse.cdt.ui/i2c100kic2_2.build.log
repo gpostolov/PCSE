@@ -1,10 +1,10 @@
-00:18:30 **** Incremental Build of configuration Debug for project i2c100kic2_2 ****
+16:18:16 **** Incremental Build of configuration Debug for project i2c100kic2_2 ****
 make -j4 all 
 arm-none-eabi-size   i2c100kic2_2.elf 
    text	   data	    bss	    dec	    hex	filename
-  14332	     20	   1652	  16004	   3e84	i2c100kic2_2.elf
+  21672	    120	   1744	  23536	   5bf0	i2c100kic2_2.elf
 Finished building: default.size.stdout
  
 
-00:18:30 Build Finished. 0 errors, 0 warnings. (took 335ms)
+16:18:17 Build Finished. 0 errors, 0 warnings. (took 343ms)
 
